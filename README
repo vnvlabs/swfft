@@ -47,7 +47,7 @@ Building
 System Requirements
 -------------------
 
-MPI-1
+MPI (known to work for 2.2 and newer, may work with some older versions)
 FFTW3 (double precision, OpenMP optional, does not use FFTW3's MPI interface)
 
 ---------

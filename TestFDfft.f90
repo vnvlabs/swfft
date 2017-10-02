@@ -88,7 +88,7 @@ program main
 
 #ifdef _OPENMP
   ierr = fftw_init_threads()
-  if (.not. ierr) then 
+  if (ierr == 0) then 
     write(*,*) "fftw_init_threads() failed!"
     call MPI_Abort(MPI_COMM_WORLD, ierr, ierr)
   endif
@@ -224,9 +224,9 @@ subroutine test
     numg = 1.0*ng(1)*ng(2)*ng(3)
     write(*,*)
     write(*,*) "Hex representations of double precision floats"
-    write(*,fmt="(F18.3,A,Z)") zero, " = ", zero
-    write(*,fmt="(F18.3,A,Z)") one, " = ", one 
-    write(*,fmt="(F18.3,A,Z)") numg, " = ", numg 
+    write(*,fmt="(F18.3,A,Z18)") zero, " = ", zero
+    write(*,fmt="(F18.3,A,Z18)") one, " = ", one 
+    write(*,fmt="(F18.3,A,Z18)") numg, " = ", numg 
     write(*,*)
   endif
 
@@ -286,7 +286,8 @@ subroutine assign_delta_function(dfft, a, n)
   !! Determine local grid dimensions in r-space
   call nlocalRspace(dfft, local_ng)
 
-  !! Fill in the delta function
+  !! Fill in the delta function.
+  !! NOTE: We are filling in one-dimensional memory using the row-major C convention.
   local_indx = 1
   do i = 1, local_ng(1)
     global_i = local_ng(1)*self(1) + i
@@ -294,11 +295,10 @@ subroutine assign_delta_function(dfft, a, n)
       global_j = local_ng(2)*self(2) + j
       do k = 1, local_ng(3)
         global_k = local_ng(3)*self(3) + k
-        a(local_indx)%im = 0.
         if (global_i == 1 .and. global_j == 1 .and. global_k == 1) then
-          a(local_indx)%re = 1.
+          a(local_indx) = cmplx(1.,0.)
         else
-          a(local_indx)%re = 0.
+          a(local_indx) = cmplx(0.,0.)
         endif
         local_indx = local_indx + 1
       enddo
@@ -325,12 +325,12 @@ subroutine check_kspace(dfft, a)
 
   nlocal = localSize(dfft)
 
-  LocalRealMin = a(1)%re ; LocalRealMax = a(1)%re
-  LocalImagMin = a(1)%im ; LocalImagMax = a(1)%im
+  LocalRealMin = real(a(2))  ; LocalRealMax = real(a(2))
+  LocalImagMin = aimag(a(2)) ; LocalImagMax = aimag(a(2))
 
   do i = 1, nlocal
-    re = a(i)%re
-    im = a(i)%im
+    re = real(a(i))
+    im = aimag(a(i))
     if (re < LocalRealMin) LocalRealMin = re
     if (re > LocalRealMax) LocalRealMax = re
     if (im < LocalImagMin) LocalImagMin = im
@@ -348,8 +348,8 @@ subroutine check_kspace(dfft, a)
   if (parRank == 0) then
     write(*,*) 
     write(*,*) "k-space:"
-    write(*,fmt="(A,F18.3,F18.3,A,Z,Z,A)") "real in [", GlobalRealMin, GlobalRealMax, "] = [", GlobalRealMin, GlobalRealMax, "]"
-    write(*,fmt="(A,F18.3,F18.3,A,Z,Z,A)") "imag in [", GlobalImagMin, GlobalImagMax, "] = [", GlobalImagMin, GlobalImagMax, "]"
+    write(*,fmt="(A,F18.3,F18.3,A,Z18,Z18,A)") "real in [", GlobalRealMin, GlobalRealMax, "] = [", GlobalRealMin, GlobalRealMax, "]"
+    write(*,fmt="(A,F18.3,F18.3,A,Z18,Z18,A)") "imag in [", GlobalImagMin, GlobalImagMax, "] = [", GlobalImagMin, GlobalImagMax, "]"
     write(*,*)
   endif
 
@@ -378,8 +378,8 @@ subroutine check_rspace(dfft, a)
   call selfRspace(dfft, self)
   call nlocalRspace(dfft, local_ng)
 
-  LocalRealMin = a(1)%re ; LocalRealMax = a(1)%re
-  LocalImagMin = a(1)%im ; LocalImagMax = a(1)%im
+  LocalRealMin = real(a(2))  ; LocalRealMax = real(a(2))
+  LocalImagMin = aimag(a(2)) ; LocalImagMax = aimag(a(2))
 
   parComm = parentComm(dfft)
   call MPI_Comm_rank(parComm, parRank, ierr)
@@ -397,10 +397,11 @@ subroutine check_rspace(dfft, a)
       do k = 1, local_ng(3)
         global_k = local_ng(3)*self(3) + k
         if (global_i == 1 .and. global_j == 1 .and. global_k == 1) then
-            write(*,fmt="(A,F18.3,F18.3,A,Z,Z,A)") "a[0,0,0] = ", a(local_indx)%re, a(local_indx)%im , "= (", a(local_indx)%re, a(local_indx)%im, ")"
+            write(*,fmt="(A,F18.3,F18.3,A,Z18,Z18,A)") "a[0,0,0] = ", real(a(local_indx)), aimag(a(local_indx)), &
+                                                                     "= (", real(a(local_indx)), aimag(a(local_indx)), ")"
         else
-          re = a(i)%re
-          im = a(i)%im
+          re = real(a(local_indx))
+          im = aimag(a(local_indx))
           if (re < LocalRealMin) LocalRealMin = re
           if (re > LocalRealMax) LocalRealMax = re
           if (im < LocalImagMin) LocalImagMin = im
@@ -411,9 +412,14 @@ subroutine check_rspace(dfft, a)
     enddo
   enddo
 
+  call MPI_Allreduce(LocalRealMin, GlobalRealMin, 1, MPI_DOUBLE, MPI_MIN, parComm, ierr)
+  call MPI_Allreduce(LocalRealMax, GlobalRealMax, 1, MPI_DOUBLE, MPI_MAX, parComm, ierr)
+  call MPI_Allreduce(LocalImagMin, GlobalImagMin, 1, MPI_DOUBLE, MPI_MIN, parComm, ierr)
+  call MPI_Allreduce(LocalImagMax, GlobalImagMax, 1, MPI_DOUBLE, MPI_MAX, parComm, ierr)
+
   if (parRank == 0) then
-    write(*,fmt="(A,F18.3,F18.3,A,Z,Z,A)") "real in [", GlobalRealMin, GlobalRealMax, "] = [", GlobalRealMin, GlobalRealMax, "]"
-    write(*,fmt="(A,F18.3,F18.3,A,Z,Z,A)") "imag in [", GlobalImagMin, GlobalImagMax, "] = [", GlobalImagMin, GlobalImagMax, "]"
+    write(*,fmt="(A,F18.3,F18.3,A,Z18,Z18,A)") "real in [", GlobalRealMin, GlobalRealMax, "] = [", GlobalRealMin, GlobalRealMax, "]"
+    write(*,fmt="(A,F18.3,F18.3,A,Z18,Z18,A)") "imag in [", GlobalImagMin, GlobalImagMax, "] = [", GlobalImagMin, GlobalImagMax, "]"
     write(*,*)
   endif
 

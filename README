@@ -1,7 +1,7 @@
-HACC DFFT MiniApp
+SWFFT (HACC)
 Adrian Pope (et al)
 apope@anl.gov
-2017-03-09
+2017-10-02
 
 ========
 Overview
@@ -9,8 +9,9 @@ Overview
 
 This directory contains the code necessary to run the Hardware Accelerated
 Cosmology Code (HACC) 3D distributed memory discrete fast Fourier transform,
-a lightweight make system, a driver for an example test code (TestDfft),
-and a utility that checks grid sizes and MPI rank layouts (CheckDecomposition).
+a lightweight make system, drivers for an example test code in C++ (TestDfft)
+as well as Fortran (TestFDfft), and a utility that checks grid sizes and 
+MPI rank layouts (CheckDecomposition).
 
 This code assumes that global grid will originally be distributed between
 MPI ranks using a 3D Cartesian communicator. That data needs to be
@@ -36,7 +37,7 @@ must be present in the set of prime factors of the grid, eg. if you have
 20 MPI ranks then ng must be a multiple of 5 and 2. The "CheckDecomposition"
 utility is provided to check (on one rank) whether a proposed grid size and
 number of MPI ranks will work, which can be done before submitting a large
-test with TestDfft.
+test with TestDfft/TestFDfft.
 
 ========
 Building
@@ -46,7 +47,7 @@ Building
 System Requirements
 -------------------
 
-MPI (version?)
+MPI-1
 FFTW3 (double precision, OpenMP optional, does not use FFTW3's MPI interface)
 
 ---------
@@ -57,6 +58,14 @@ The default GNUmakefile contains the basic build rules and will create an
 MPI-only version of the code:
 
 $ make
+
+By default the GNUmakefile will make the C/C++ interface and driver, the
+Fortran interface and driver, and the CheckDecomposition utility. There are
+also rules to make subsets of these:
+
+$ make nativec
+$ make utilities
+$ make fortran
 
 There is also an example of how to modify the makefile to compile with OpenMP
 threading on each MPI rank:
@@ -76,6 +85,21 @@ environment variables:
 
 $ export DFFT_MPI_CC=cc
 $ export DFFT_MPI_CXX=CC
+$ export DFFT_MPI_FC=ftn
+
+When using the Intel compilers without the Cray wrappers it may be easier to
+use the Intel-specific MPI wrappers, eg:
+
+$ export DFFT_MPI_CC=mpiicc
+$ export DFFT_MPI_CXX=mpiicpc
+$ export DFFT_MPI_FC=mpiifort
+
+If FFTW3 is in C/PATH, then the GNUmakefile will find it by searching for the
+fftw-wisdom executable. An alternate FFTW3 installation can be specified by
+setting an environment variable to the directory above the "include" and "lib"
+directories:
+
+$ export DFFT_FFTW_HOME=/path/to/fftw3
 
 See the base GNUmakefile for a commented list of variables.
 
@@ -257,6 +281,40 @@ ALCF/Mira/BGQ has incomplete support for C++11 and is unlikely to add
 features in the remaining lifetime of the machine (2019-2020) so we use
 C++11 features very sparingly.
 
+===========================
+TestFDfft (Fortran Example)
+===========================
+
+-----
+Usage
+-----
+
+This test program proivdes an example interface for the Fortran wrappers
+built around the the C++ Distribution and Dfft classes. The structure
+and usage of this program is identical to the C++ TestDfft dirver. The
+command line signature follows as
+
+$ build/TestFDfft <n_repetitions> <ngx> [ngy ngz]
+
+with the same interpretation as described above for TestDfft.  
+
+The Fortran wrappers are contained in the FDistribution and FDfft modules
+which are built around the F2003 standard ISO_C_BINDING module. An 
+important point to make is that the Fortran wrappers interface with C 
+pointers to the Fortran arrays containing the data to be transformed. This 
+is achieved using the F2003 standard C_F_POINTER subroutine. In addition, 
+optimal memory alignment is obtained using the fftw_alloc_complex function. 
+The TestFDfft driver provides a good example of each of these procedures. 
+See further notes below regarding the usage of multidimensional arrays 
+within the Fortran interface.
+
+--------------
+Example Output
+--------------
+
+The output from TestFDfft will match that of TestDfft shown above including
+the hexadecimal cast to check bit-wise numerical accuracy.
+
 ============================
 CheckDecomposition (Utility)
 ============================
@@ -310,3 +368,17 @@ for iteration through the grids values themselves, so the total number of
 grid vertexes locally and globally should not be limited by 32-bit integer
 size. This distribution code has been tested up to 16384^3 global grid and
 on >~10^6 MPI-ranks.
+
+-------------------------------
+Fortran Multidimensional Arrays
+-------------------------------
+
+The linear storage in memory of multidimensional arrays differs between
+that of C (row-major) and Fortran (column-major). The Fortran interface
+provided here implicitly assumes that the one-dimensional memory storage
+of the arrays to be transformed conforms with the C convention. The 
+returned transformed data is also arranged in row-major format. Hence, care
+must be taken to ensure that data is arranged in this way when interfacing
+with the Fortran wrappers. In general, this involves a transpose of data when 
+using a multidimensional Fortran array to store the 3D data in memory. 
+

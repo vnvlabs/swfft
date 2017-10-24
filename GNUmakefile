@@ -126,8 +126,14 @@ $(DFFT_MPI_DIR)/%.o: %.f90 | $(DFFT_MPI_DIR)
 $(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o
 	$(DFFT_MPI_CXX) $(DFFT_MPI_CXXFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)
 
+
+
 $(DFFT_MPI_DIR)/CheckDecomposition: $(DFFT_MPI_DIR)/CheckDecomposition.o $(DFFT_MPI_DIR)/distribution.o
 	$(DFFT_MPI_CC) $(DFFT_MPI_CFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)
+
+
+
+$(DFFT_MPI_DIR)/FDfft.o: $(DFFT_MPI_DIR)/FDistribution.o
 
 $(DFFT_MPI_DIR)/TestFDfft.o: TestFDfft.f90 $(DFFT_MPI_DIR)/FDistribution.o $(DFFT_MPI_DIR)/FDfft.o
 

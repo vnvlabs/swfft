@@ -59,6 +59,7 @@
 // C
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 // parallelism
 #include <mpi.h>
@@ -82,6 +83,14 @@
 #define ALIGN 16
 
 using namespace hacc;
+
+
+
+uint64_t double_to_uint64_t(double d) {
+  uint64_t i;
+  memcpy(&i, &d, 8);
+  return i;
+}
 
 
 
@@ -151,14 +160,14 @@ void check_kspace(Dfft &dfft, complex_t *a)
 	      << "real in " << std::scientific
 	      << "[" << GlobalRealMin << "," << GlobalRealMax << "]"
 	      << " = " << std::hex
-	      << "[" << *reinterpret_cast<uint64_t *>(&GlobalRealMin) << ","
-	      << *reinterpret_cast<uint64_t *>(&GlobalRealMax) << "]"
+	      << "[" << double_to_uint64_t(GlobalRealMin) << ","
+	      << double_to_uint64_t(GlobalRealMax) << "]"
 	      << std::endl
 	      << "imag in " << std::scientific
 	      << "[" << GlobalImagMin << "," << GlobalImagMax << "]"
 	      << " = " << std::hex
-      	      << "[" << *reinterpret_cast<uint64_t *>(&GlobalImagMin) << ","
-	      << *reinterpret_cast<uint64_t *>(&GlobalImagMax) << "]"
+      	      << "[" << double_to_uint64_t(GlobalImagMin) << ","
+	      << double_to_uint64_t(GlobalImagMax) << "]"
 	      << std::endl << std::endl << std::fixed;
   }
 }
@@ -198,9 +207,9 @@ void check_rspace(Dfft &dfft, complex_t *a)
 	   global_k == 0) {
 	  std::cout << "a[0,0,0] = " << std::fixed << a[local_indx]
 		    << std::hex << " = ("
-		    << *reinterpret_cast<uint64_t *>(&std::real(a[local_indx]))
+		    << double_to_uint64_t(std::real(a[local_indx]))
 		    << ","
-		    << *reinterpret_cast<uint64_t *>(&std::imag(a[local_indx]))
+		    << double_to_uint64_t(std::imag(a[local_indx]))
 		    << ")" << std::endl;
 	} else {
 	  double re = std::real(a[local_indx]);
@@ -226,14 +235,14 @@ void check_rspace(Dfft &dfft, complex_t *a)
     std::cout << "real in " << std::scientific
 	      << "[" << GlobalRealMin << "," << GlobalRealMax << "]"
 	      << " = " << std::hex
-	      << "[" << *reinterpret_cast<uint64_t *>(&GlobalRealMin) << ","
-	      << *reinterpret_cast<uint64_t *>(&GlobalRealMax) << "]"
+	      << "[" << double_to_uint64_t(GlobalRealMin) << ","
+	      << double_to_uint64_t(GlobalRealMax) << "]"
 	      << std::endl
 	      << "imag in " << std::scientific
 	      << "[" << GlobalImagMin << "," << GlobalImagMax << "]"
 	      << " = " << std::hex
-      	      << "[" << *reinterpret_cast<uint64_t *>(&GlobalImagMin) << ","
-	      << *reinterpret_cast<uint64_t *>(&GlobalImagMax) << "]"
+      	      << "[" << double_to_uint64_t(GlobalImagMin) << ","
+	      << double_to_uint64_t(GlobalImagMax) << "]"
 	      << std::endl << std::endl << std::fixed;
   }
 }
@@ -277,13 +286,13 @@ void test(MPI_Comm comm,
 	      << std::endl;
     double zero = 0.0;
     std::cout << std::scientific << zero << " = " << std::hex
-	      << *reinterpret_cast<uint64_t *>(&zero) << std::endl;
+	      << double_to_uint64_t(zero) << std::endl;
     double one = 1.0;
     std::cout << std::scientific << one << " = " << std::hex
-	      << *reinterpret_cast<uint64_t *>(&one) << std::endl;
+	      << double_to_uint64_t(one) << std::endl;
     double Ng = 1.0*(((uint64_t)ng[0])*((uint64_t)ng[1])*((uint64_t)ng[2]));
     std::cout << std::fixed << Ng << " = " << std::hex
-	      << *reinterpret_cast<uint64_t *>(&Ng) << std::endl;
+	      << double_to_uint64_t(Ng) << std::endl;
     std::cout << std::endl;
   }
   MPI_Barrier(CartComm);

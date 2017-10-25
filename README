@@ -1,7 +1,7 @@
 SWFFT (HACC)
 Adrian Pope (et al)
 apope@anl.gov
-2017-10-02
+2017-10-25
 
 ========
 Overview
@@ -59,9 +59,14 @@ MPI-only version of the code:
 
 $ make
 
-By default the GNUmakefile will make the C/C++ interface and driver, the
-Fortran interface and driver, and the CheckDecomposition utility. There are
-also rules to make subsets of these:
+By default the GNUmakefile will make the C/C++ interface and test driver 
+and the CheckDecomposition utility. The Fortran interface and test driver
+are not built by default as the GNUmakefile will often require modification
+to properly build and link the application. To make everything:
+
+$ make all
+
+There are also rules to make subsets of these:
 
 $ make nativec
 $ make utilities

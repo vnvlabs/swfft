@@ -80,7 +80,7 @@ DFFT_MPI_FFLAGS ?= -g -O3 -cpp
 DFFT_MPI_LDFLAGS ?= 
 
 # additional Fortran linker flags
-# sometimes this also needs -lmpi++
+# sometimes this also needs -lmpi++, -lmpicxx, -lmpi_cxx, etc
 DFFT_MPI_FLDFLAGS ?= -lstdc++
 
 # FFTW3
@@ -96,6 +96,8 @@ DFFT_MPI_LDFLAGS += $(DFFT_FFTW_LDFLAGS)
 
 
 
+default: nativec utilities
+
 all: nativec utilities fortran
 
 nativec: $(DFFT_MPI_DIR)/TestDfft
@@ -104,6 +106,7 @@ fortran: $(DFFT_MPI_DIR)/TestFDfft
 
 utilities: $(DFFT_MPI_DIR)/CheckDecomposition
 
+.PHONY: clean
 clean: 
 	rm -rf $(DFFT_MPI_DIR) *.mod
 

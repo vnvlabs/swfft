@@ -67,6 +67,18 @@
 #include <omp.h>
 #endif
 
+#include <VnV.h>
+
+/*
+#ifdef WITH_MPI
+#  include <mpi.h>
+INJECTION_EXECUTABLE(SWFFT, VNV, mpi)
+#else
+#  define MPI_Init(...)
+#  define MPI_Finalize()
+INJECTION_EXECUTABLE(SWFFT, VNV, serial)
+#endif
+*/
 // HACC
 #include "complex-type.h"
 #include "AlignedAllocator.h"
@@ -329,16 +341,15 @@ void test(MPI_Comm comm,
 }
 
 
-
 int main(int argc, char *argv[])
 {
-
   if(argc < 3) {
     std::cerr << "USAGE: " << argv[0] << " <n_repetitions> <ngx> [ngy ngz]" << std::endl;
     return -1;
   }
   
   MPI_Init(&argc, &argv);
+  INJECTION_INITIALIZE(SWFFT, &argc, &argv, "./swfft.json")
 
   size_t repetitions = atol(argv[1]);
   int ng[3];
@@ -362,7 +373,8 @@ int main(int argc, char *argv[])
 #endif
 
   test(MPI_COMM_WORLD, repetitions, ng);
-  
+
+  INJECTION_FINALIZE(SWFFT);
   MPI_Finalize();
   
   return 0;

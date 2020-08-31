@@ -74,7 +74,7 @@ public:
       SysError = strerror(errno);
   }
 
-  ~Error() {
+  ~Error() noexcept(false) {
     if (SysError)
       SS << ": " << SysError;
 

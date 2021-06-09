@@ -52,10 +52,10 @@
 
 # defines for VnV
 #PACKAGENAME=swfft
-VNV_MATCHER=../vv-build/extraction/vnv-matcher
-LLVM_INSTALL_DIR=/usr/local/Cellar/llvm/10.0.0_3
-EXTRA_ARGS=--extra-arg=-I$(LLVM_INSTALL_DIR)/include/c++/v1 --extra-arg=-I$(LLVM_INSTALL_DIR)/lib/clang/10.0.0/include
-VV_INCLUDES=-I../vv-neams/injection/include -I../vv-neams/injection/third-party/json-schema-validator/include
+VNV_DIR ?=~/software/vnv/
+VNV_MATCHER ?= ${VNV_DIR}/bin/vnv-matcher
+VV_INCLUDES= -I${VNV_DIR}/include 
+
 
 # output directory
 DFFT_MPI_DIR ?= build
@@ -84,7 +84,7 @@ DFFT_MPI_CXXFLAGS ?= -g -O3 -Wall -std=c++14 $(VV_INCLUDES) -DWITH_MPI=1 #-DPACK
 DFFT_MPI_FFLAGS ?= -g -O3 -cpp
 
 # linker flags
-DFFT_MPI_LDFLAGS ?= -L../vv-build/injection -linjection -Wl,-rpath ../vv-build/injection
+DFFT_MPI_LDFLAGS ?= -L${VNV_DIR}/lib -linjection -Wl,-rpath ${VNV_DIR}/lib
 
 # additional Fortran linker flags
 # sometimes this also needs -lmpi++, -lmpicxx, -lmpi_cxx, etc
@@ -114,7 +114,7 @@ fortran: $(DFFT_MPI_DIR)/TestFDfft
 utilities: $(DFFT_MPI_DIR)/CheckDecomposition
 
 compile_commands.json:
-	compiledb make -n
+	bear make 
 	
 	
 .PHONY: clean
@@ -135,14 +135,11 @@ $(DFFT_MPI_DIR)/%.o: %.cpp | $(DFFT_MPI_DIR)
 $(DFFT_MPI_DIR)/%.o: %.f90 | $(DFFT_MPI_DIR)
 	$(DFFT_MPI_FC) $(DFFT_MPI_FFLAGS) $(DFFT_MPI_CPPFLAGS) -c -o $@ $<
 
-reg_SWFFT.cpp: compile_commands.json Dfft.hpp Distribution.hpp
-	#$(VNV_MATCHER) $(EXTRA_ARGS) --package $(PACKAGENAME) --output $@ compile_commands.json
-	$(VNV_MATCHER) $(EXTRA_ARGS) --output reg compile_commands.json
+reg_SWFFT.cpp: Dfft.hpp Distribution.hpp
+	$(VNV_MATCHER) $(EXTRA_ARGS) --package $(PACKAGENAME) --output reg --extension cpp compile_commands.json
 
 $(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o $(DFFT_MPI_DIR)/reg_SWFFT.o
 	$(DFFT_MPI_CXX) $(DFFT_MPI_CXXFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)
-
-
 
 $(DFFT_MPI_DIR)/CheckDecomposition: $(DFFT_MPI_DIR)/CheckDecomposition.o $(DFFT_MPI_DIR)/distribution.o
 	$(DFFT_MPI_CC) $(DFFT_MPI_CFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)

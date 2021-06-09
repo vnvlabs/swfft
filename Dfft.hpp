@@ -1,3 +1,4 @@
+
 /*
  *                 Copyright (C) 2017, UChicago Argonne, LLC
  *                            All Rights Reserved
@@ -142,7 +143,7 @@ public:
     double start, stop;
     double tdist=0.0, tdfft=0.0;
     start = MPI_Wtime();
-    INJECTION_POINT(SWFFT, VWORLD(SWFFT), forward, start)
+    INJECTION_POINT("SWFFT", VWORLD, "forward", start);
 #endif
 
     distribution_3_to_2(&in[0], &m_fs[0], &d.m_d, 0);   // in --> fs

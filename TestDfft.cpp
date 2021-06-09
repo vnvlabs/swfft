@@ -67,18 +67,11 @@
 #include <omp.h>
 #endif
 
-#include <VnV.h>
+#include "VnV.h"
 
-/*
-#ifdef WITH_MPI
-#  include <mpi.h>
 INJECTION_EXECUTABLE(SWFFT, VNV, mpi)
-#else
-#  define MPI_Init(...)
-#  define MPI_Finalize()
-INJECTION_EXECUTABLE(SWFFT, VNV, serial)
-#endif
-*/
+
+	
 // HACC
 #include "complex-type.h"
 #include "AlignedAllocator.h"
@@ -349,7 +342,7 @@ int main(int argc, char *argv[])
   }
   
   MPI_Init(&argc, &argv);
-  INJECTION_INITIALIZE(SWFFT, &argc, &argv, "./swfft.json")
+  INJECTION_INITIALIZE(SWFFT, &argc, &argv, "./swfft.json");
 
   size_t repetitions = atol(argv[1]);
   int ng[3];

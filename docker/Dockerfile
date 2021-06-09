@@ -1,5 +1,6 @@
 
 
 from vnv:latest
-RUN cd /vnv-mount/applications/swfft && bear make && make 
+COPY . ./swfft
+RUN cd swfft && bear make && make 
 

@@ -98,7 +98,6 @@ uint64_t double_to_uint64_t(double d) {
 }
 
 
-
 void assign_delta_function(Dfft &dfft, complex_t *a)
 {
   // location of my rank in r-space
@@ -355,7 +354,7 @@ int main(int argc, char *argv[])
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  // initialize fftw3 openmp threads if necessary
+o
 #ifdef _OPENMP
   if(!fftw_init_threads())
     Error() << "fftw_init_threads() failed!";

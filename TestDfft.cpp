@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-o
+
 #ifdef _OPENMP
   if(!fftw_init_threads())
     Error() << "fftw_init_threads() failed!";

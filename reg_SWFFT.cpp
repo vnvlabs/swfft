@@ -12,8 +12,7 @@ const char* getFullRegistrationJson_SWFFT(){
 	 return "{\"Communicator\":{\"docs\":\"\",\"name\":\"mpi\",\"package\":\"VNV\"},\"Conclusion\":\"\",\"InjectionPoints\":{\"forward\":{\"docs\":\"\",\"name\":\"forward\",\"packageName\":\"SWFFT\",\"parameters\":[{\"start\":\"double\"}],\"stages\":{\"Begin\":{\"docs\":\"\",\"info\":{\"Calling Function\":\"forward\",\"Calling Function Column\":3,\"Calling Function Line\":138,\"filename\":\"./Dfft.hpp\",\"lineColumn\":5,\"lineNumber\":126}}}}},\"Introduction\":\"\"}";}
 
 INJECTION_REGISTRATION(SWFFT){
-	VnV_Declare_Communicator("SWFFT","VNV","mpi");
-	Register_Injection_Point("SWFFT","forward",0,"{\"start\":\"double\"}");
+	Register_Injection_Point("SWFFT","forward","{\"start\":\"double\"}");
 	REGISTER_FULL_JSON(SWFFT, getFullRegistrationJson_SWFFT);
 };
 

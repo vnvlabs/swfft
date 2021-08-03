@@ -4,7 +4,7 @@
 
 using namespace VnV; 
 
-class ComplexDataType : public Communication::IDataType {
+class ComplexDataType : public IDataType {
 
 public:
    complex_t data;
@@ -65,9 +65,6 @@ public:
   }
 };
 
-}  // namespace DataTypes
-}  // namespace PACKAGENAME
-}  // namespace VnV
 
 INJECTION_DATATYPE(VNVPACKAGENAME, string, std::string) {
   return new VnV::VNVPACKAGENAME::DataTypes::StringDataType<1024,std::string>(

@@ -136,7 +136,7 @@ $(DFFT_MPI_DIR)/%.o: %.f90 | $(DFFT_MPI_DIR)
 	$(DFFT_MPI_FC) $(DFFT_MPI_FFLAGS) $(DFFT_MPI_CPPFLAGS) -c -o $@ $<
 
 reg_SWFFT.cpp: Dfft.hpp Distribution.hpp
-	$(VNV_MATCHER) $(EXTRA_ARGS) --package $(PACKAGENAME) --output reg --extension cpp compile_commands.json
+	$(VNV_MATCHER) $(EXTRA_ARGS) --package $(PACKAGENAME) --output reg_SWFFT.cpp --cache reg.__cache__ compile_commands.json
 
 $(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o $(DFFT_MPI_DIR)/reg_SWFFT.o
 	$(DFFT_MPI_CXX) $(DFFT_MPI_CXXFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)

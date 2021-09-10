@@ -125,6 +125,7 @@ clean:
 
 $(DFFT_MPI_DIR): 
 	mkdir -p $(DFFT_MPI_DIR)
+	cp ./swfft.json ${DFFT_MPI_DIR}/ 
 
 $(DFFT_MPI_DIR)/%.o: %.c | $(DFFT_MPI_DIR)
 	$(DFFT_MPI_CC) $(DFFT_MPI_CFLAGS) $(DFFT_MPI_CPPFLAGS) -c -o $@ $<

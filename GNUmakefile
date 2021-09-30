@@ -51,8 +51,8 @@
 # *****************************************************************************
 
 # defines for VnV
-#PACKAGENAME=swfft
-VNV_DIR ?=~/software/vnv/
+PACKAGENAME=SWFFT
+VNV_DIR ?=/home/ben/software/vnv/
 VNV_MATCHER ?= ${VNV_DIR}/bin/vnv-matcher
 VV_INCLUDES= -I${VNV_DIR}/include 
 
@@ -119,9 +119,12 @@ compile_commands.json:
 	
 .PHONY: clean
 clean: 
-	rm -rf $(DFFT_MPI_DIR) *.mod compile_commands.json reg.cpp*
+	rm -rf $(DFFT_MPI_DIR) *.mod compile_commands.json reg_SWFFT.cpp reg.__cache__
+	cp reg_SWFFT.template reg_SWFFT.cpp
 
-
+.PHONY: vnv
+vnv:
+	$(VNV_MATCHER) $(EXTRA_ARGS) --package=$(PACKAGENAME) --cache=reg.__cache__ --output=reg_SWFFT.cpp compile_commands.json
 
 $(DFFT_MPI_DIR): 
 	mkdir -p $(DFFT_MPI_DIR)
@@ -135,9 +138,6 @@ $(DFFT_MPI_DIR)/%.o: %.cpp | $(DFFT_MPI_DIR)
 
 $(DFFT_MPI_DIR)/%.o: %.f90 | $(DFFT_MPI_DIR)
 	$(DFFT_MPI_FC) $(DFFT_MPI_FFLAGS) $(DFFT_MPI_CPPFLAGS) -c -o $@ $<
-
-reg_SWFFT.cpp: Dfft.hpp Distribution.hpp
-	$(VNV_MATCHER) $(EXTRA_ARGS) --package $(PACKAGENAME) --output reg_SWFFT.cpp --cache reg.__cache__ compile_commands.json
 
 $(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o $(DFFT_MPI_DIR)/reg_SWFFT.o
 	$(DFFT_MPI_CXX) $(DFFT_MPI_CXXFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)

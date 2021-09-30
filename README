@@ -39,6 +39,26 @@ utility is provided to check (on one rank) whether a proposed grid size and
 number of MPI ranks will work, which can be done before submitting a large
 test with TestDfft/TestFDfft.
 
+===
+VNV
+===
+This verison of SWFFT supports VNV. The repo has an up to date version of the 
+VnV registration file, so, you should not have to do anything extra. 
+
+If you are developing and you add an injection point, a file, or something else, 
+then you will need to regenerate the vnv registration file. 
+
+To do that:
+
+1. If you are doing this for the first time (or if you add a new file)
+   a) make clean
+   b) bear make  (could be bear -- make depending on version)
+
+2. make vnv
+3. make 
+ 
+
+
 ========
 Building
 ========

@@ -119,12 +119,13 @@ compile_commands.json:
 	
 .PHONY: clean
 clean: 
-	rm -rf $(DFFT_MPI_DIR) *.mod compile_commands.json reg_SWFFT.cpp reg.__cache__
-	cp reg_SWFFT.template reg_SWFFT.cpp
+	rm -rf $(DFFT_MPI_DIR) *.mod compile_commands.json
+
 
 .PHONY: vnv
-vnv:
-	$(VNV_MATCHER) $(EXTRA_ARGS) --package=$(PACKAGENAME) --cache=reg.__cache__ --output=reg_SWFFT.cpp compile_commands.json
+vnv:  	
+	cp reg_SWFFT.template reg_SWFFT.cpp
+	$(VNV_MATCHER) $(EXTRA_ARGS) --package=$(PACKAGENAME) --output=reg_SWFFT.cpp compile_commands.json
 
 $(DFFT_MPI_DIR): 
 	mkdir -p $(DFFT_MPI_DIR)

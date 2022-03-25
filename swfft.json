@@ -1,28 +1,2 @@
 ﻿{
-  "runTests": true,
-  "logging": {
-
-    "on" : true,
-    "filename" : "stdout",
-    "logs" : {}
-  },
-  "outputEngine": {
-    "type": "json_file",
-    "config": {
-       "filename" : "vv-output"
-    }
-  },
-  "injectionPoints": [
-      {
-        "name" : "initialization",
-        "package" : "VNV",
-        "tests" : [
-            {
-                "name" : "cputime",
-                "package" : "VNV",
-                "parameters": {}
-            }
-        ]
-      }
-  ]
 }

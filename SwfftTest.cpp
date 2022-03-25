@@ -15,16 +15,15 @@ using namespace VnV;
   Test SWFFT
 
 **/
-INJECTION_TEST(EuclideanError, std::vector<double> measured,
-               (std::vector<double>)exact_test) {
-  const std::vector<double> measured = get<std::vector<double>>("measured");
-  const std::vector<double> exact = get<std::vector<double>>("exact");
+INJECTION_TEST(SWFFT, EuclideanError) {
+  auto measured = GetRef_NoCheck("measured", std::vector<double>);
+  auto exact = GetRef_NoCheck("exact",std::vector<double>);
 
   if (measured.size() != exact.size()) {
     double m1 = -1;
-    engine->Put(comm, "l2_error", m1);
-    engine->Put(comm, "l1_error", m1);
-    engine->Put(comm, "linf_error", m1);
+    engine->Put("l2_error", m1);
+    engine->Put("l1_error", m1);
+    engine->Put("linf_error", m1);
     return FAILURE;
   }
 
@@ -37,9 +36,9 @@ INJECTION_TEST(EuclideanError, std::vector<double> measured,
   }
 
   l2 = sqrt(l2);
-  engine->Put(comm, "l2_error", l2);
-  engine->Put(comm, "l1_error", l1);
-  engine->Put(comm, "linf_error", linf);
+  engine->Put("l2_error", l2);
+  engine->Put("l1_error", l1);
+  engine->Put("linf_error", linf);
   return SUCCESS;
 }
 

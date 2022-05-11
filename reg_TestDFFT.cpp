@@ -1,0 +1,3 @@
+#include "VnV.h" 
+
+INJECTION_REGISTRATION(TestDFFT){}

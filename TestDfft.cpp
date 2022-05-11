@@ -67,9 +67,6 @@
 #include <omp.h>
 #endif
 
-#include "VnV.h"
-
-INJECTION_EXECUTABLE(SWFFT)
 
 	
 // HACC
@@ -89,6 +86,14 @@ INJECTION_EXECUTABLE(SWFFT)
 
 using namespace hacc;
 
+/**
+ * @title Test DFFT Application
+ * 
+ */
+INJECTION_EXECUTABLE(TestDFFT)
+
+
+INJECTION_SUBPACKAGE(TestDFFT, SWFFT)
 
 
 uint64_t double_to_uint64_t(double d) {

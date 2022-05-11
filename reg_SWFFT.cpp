@@ -1,9 +1,2 @@
-
 #include "VnV.h" 
-
-
-
-INJECTION_REGISTRATION(SWFFT){};
-
-
-
+INJECTION_REGISTRATION(SWFFT){}

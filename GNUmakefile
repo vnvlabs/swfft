@@ -121,12 +121,6 @@ compile_commands.json:
 clean: 
 	rm -rf $(DFFT_MPI_DIR) *.mod compile_commands.json
 
-
-.PHONY: vnv
-vnv:  	
-	cp reg_SWFFT.template reg_SWFFT.cpp
-	$(VNV_MATCHER) $(EXTRA_ARGS) --package=$(PACKAGENAME) --output=reg_SWFFT.cpp compile_commands.json
-
 $(DFFT_MPI_DIR): 
 	mkdir -p $(DFFT_MPI_DIR)
 	cp ./swfft.json ${DFFT_MPI_DIR}/ 
@@ -140,12 +134,11 @@ $(DFFT_MPI_DIR)/%.o: %.cpp | $(DFFT_MPI_DIR)
 $(DFFT_MPI_DIR)/%.o: %.f90 | $(DFFT_MPI_DIR)
 	$(DFFT_MPI_FC) $(DFFT_MPI_FFLAGS) $(DFFT_MPI_CPPFLAGS) -c -o $@ $<
 
-$(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o $(DFFT_MPI_DIR)/reg_SWFFT.o
+$(DFFT_MPI_DIR)/TestDfft: $(DFFT_MPI_DIR)/TestDfft.o $(DFFT_MPI_DIR)/distribution.o $(DFFT_MPI_DIR)/reg_TestDFFT.o $(DFFT_MPI_DIR)/reg_SWFFT.o
 	$(DFFT_MPI_CXX) $(DFFT_MPI_CXXFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)
 
 $(DFFT_MPI_DIR)/CheckDecomposition: $(DFFT_MPI_DIR)/CheckDecomposition.o $(DFFT_MPI_DIR)/distribution.o
 	$(DFFT_MPI_CC) $(DFFT_MPI_CFLAGS) -o $@ $^ $(DFFT_MPI_LDFLAGS)
-
 
 
 $(DFFT_MPI_DIR)/FDfft.o: $(DFFT_MPI_DIR)/FDistribution.o

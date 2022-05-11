@@ -67,6 +67,14 @@
 #include "complex-type.h"
 #include "Distribution.hpp"
 #include "Error.h"
+#include "VnV.h"
+
+/**
+ * @title The SWFFT VnV Package
+ * 
+ */
+INJECTION_REGISTRATION(SWFFT);
+
 
 // DFFT_TIMING
 // 0 = no info

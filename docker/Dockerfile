@@ -25,5 +25,5 @@ RUN cd ${SOURCE_DIR}/swfft \
 
 
 ENV VNV_CONFIG=${VNV_CONFIG}:${SOURCE_DIR}/swfft/build/vnv.__registration__
-
+ENV VNV_CONFIG=${VNV_CONFIG}:${SOURCE_DIR}/swfft/docker/config/vnv.__registration__
 

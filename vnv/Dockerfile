@@ -1,10 +1,6 @@
 ARG FROM_IMAGE=vnv_base
 FROM ${FROM_IMAGE}
 
-ARG COMMIT_HASH=unknown
-LABEL vnv.version.swfft=${COMMIT_HASH}
-
-
 # install swfft with VnV
 COPY . ${SOFTWARE_DIR}/swfft
 RUN cd ${SOFTWARE_DIR}/swfft \
@@ -24,7 +20,6 @@ RUN cd ${SOFTWARE_DIR}/swfft \
 	                  compile_commands.json\
     && make
 
+RUN echo ${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__  >> ${HOME}/.vnv
 
-ENV VNV_CONFIG=${VNV_CONFIG}:${SOFTWARE_DIR}/swfft/vnv.__registration__
-ENV VNV_CONFIG=${VNV_CONFIG}:${SOFTWARE_DIR}/swfft/vnv/gui/config/vnv.__registration__
 

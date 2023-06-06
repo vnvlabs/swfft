@@ -20,6 +20,6 @@ RUN cd ${SOFTWARE_DIR}/swfft \
 	                  compile_commands.json\
     && make
 
-RUN echo ${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__  >> ${HOME}/.vnv
+RUN python3 ${VNV_DIR}/scripts/register.py register ${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__ 
 
 

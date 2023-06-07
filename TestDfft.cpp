@@ -90,7 +90,7 @@ using namespace hacc;
  * @title Test DFFT Application
  * 
  */
-INJECTION_EXECUTABLE(TestDFFT)
+INJECTION_EXECUTABLE(TestDFFT,"{}")
 
 
 INJECTION_SUBPACKAGE(TestDFFT, SWFFT)

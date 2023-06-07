@@ -10,16 +10,14 @@ RUN cd ${SOFTWARE_DIR}/swfft \
                       --output reg_SWFFT.cpp\
                       --cache vnv.__cache__\
 		              --fix-omp \ 
-                      --regFile vnv.__registration__ \
  		              compile_commands.json \
     && ${VNV_MATCHER} --package TestDFFT\ 
                       --output reg_TestDFFT.cpp\
                       --cache vnv.__cache__\
- 		              --regFile vnv.__registration__\
 		              --targetFile $PWD/build/TestDFFT \
 	                  compile_commands.json\
     && make
 
-RUN python3 ${VNV_DIR}/scripts/register.py register ${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__ 
+ENV VNV_CONFIG=${VNV_CONFIG}:${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__ 
 
 

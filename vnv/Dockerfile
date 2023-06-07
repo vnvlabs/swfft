@@ -18,6 +18,6 @@ RUN cd ${SOFTWARE_DIR}/swfft \
 	                  compile_commands.json\
     && make
 
-ENV VNV_CONFIG=${VNV_CONFIG}:${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__ 
+RUN ${VNV_REGISTER} gui swfft ${SOFTWARE_DIR}/swfft/vnv/gui/vnv.__registration__ 
 
 

@@ -16,8 +16,8 @@ using namespace VnV;
 
 **/
 INJECTION_TEST(SWFFT, EuclideanError) {
-  auto measured = GetRef_NoCheck("measured", std::vector<double>);
-  auto exact = GetRef_NoCheck("exact",std::vector<double>);
+  auto measured = GetRef("measured", std::vector<double>);
+  auto exact = GetRef("exact",std::vector<double>);
 
   if (measured.size() != exact.size()) {
     double m1 = -1;

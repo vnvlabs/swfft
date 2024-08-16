@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
   }
   
   MPI_Init(&argc, &argv);
-  INJECTION_INITIALIZE(SWFFT, &argc, &argv, "./swfft.json");
+  INJECTION_INITIALIZE(SWFFT, &argc, &argv);
 
   size_t repetitions = atol(argv[1]);
   int ng[3];
